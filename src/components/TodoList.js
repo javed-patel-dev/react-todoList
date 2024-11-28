@@ -7,15 +7,15 @@ const TodoList = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchTodos();
+    setTimeout(() => {
+      fetchTodos();
+    }, 1000);
   }, []);
 
   const fetchTodos = async () => {
     try {
       const response = await getTodos(); // Make API call
-      console.log("response from todos", response.data.data.todos);
       setTodos(response.data.data.todos); // Update state with API data
-      console.log(todos);
     } catch (error) {
       console.error("Error fetching todos:", error);
       setTodos([]); // Fallback to empty array in case of error
@@ -26,6 +26,18 @@ const TodoList = () => {
     await deleteTodo(id);
     fetchTodos(); // Refresh the list
   };
+
+  // if (!todos.length) {
+  //   return (
+  //     <div className="container">
+  //       <div className="row">
+  //         <div className="col-md-12 text-center">
+  //           <h1 className="text-muted">Loading...</h1>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="container">
@@ -50,42 +62,54 @@ const TodoList = () => {
                 <th>Actions</th>
               </tr>
             </thead>
-            <tbody>
-              {todos.map((todo) => (
-                <tr
-                  key={todo._id}
-                  className={todo.status === "completed" ? "table-success" : ""}
-                >
-                  <td className="text-capitalize">{todo.title}</td>
-                  <td>{todo.description}</td>
-                  <td className="text-center">
-                    <span
-                      className={`badge ${
-                        todo.status === "completed"
-                          ? "bg-success"
-                          : "bg-secondary"
-                      }`}
-                    >
-                      {todo.status}
-                    </span>
-                  </td>
-                  <td className="text-center">
-                    <button
-                      className="btn btn-warning btn-sm me-2"
-                      onClick={() => navigate(`/edit/${todo._id}`)}
-                    >
-                      <i className="bi bi-pencil"></i> Edit
-                    </button>
-                    <button
-                      className="btn btn-danger btn-sm"
-                      onClick={() => handleDelete(todo._id)}
-                    >
-                      <i className="bi bi-trash"></i> Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
+            {todos.length === 0 ? (
+              <div className="container">
+                <div className="row">
+                  <div className="col-md-12 text-center">
+                    <h1 className="text-center text-muted">Loading.....</h1>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <tbody>
+                {todos.map((todo) => (
+                  <tr
+                    key={todo._id}
+                    className={
+                      todo.status === "completed" ? "table-success" : ""
+                    }
+                  >
+                    <td className="text-capitalize">{todo.title}</td>
+                    <td>{todo.description}</td>
+                    <td className="text-center">
+                      <span
+                        className={`badge ${
+                          todo.status === "completed"
+                            ? "bg-success"
+                            : "bg-secondary"
+                        }`}
+                      >
+                        {todo.status}
+                      </span>
+                    </td>
+                    <td className="text-center">
+                      <button
+                        className="btn btn-warning btn-sm me-2"
+                        onClick={() => navigate(`/edit/${todo._id}`)}
+                      >
+                        <i className="bi bi-pencil"></i> Edit
+                      </button>
+                      <button
+                        className="btn btn-danger btn-sm"
+                        onClick={() => handleDelete(todo._id)}
+                      >
+                        <i className="bi bi-trash"></i> Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            )}
           </table>
         </div>
       </div>
